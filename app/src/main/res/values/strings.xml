@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">酒店自助机</string>
+    <string name="tishi">请放置身份证至感应区</string>
+    <string name="tishi2">请按照图示将正脸对准屏幕进行人脸识别</string>
+    <string name="phone">
+        尊敬的客人:\n
+        您好，为防止您物品遗落，方便客房人员及时联系到您\n
+        请在下方留下您的联系方式。
+    </string>
+    <string name="phonehint">请输入您的手机号</string>
+    <string name="phonecode">请输入验证码</string>
+    <string name="phone_number">Phone number</string>
+</resources>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="all"
+    android:background="@drawable/beijing"
+    tools:context="com.sun.hotelproject.moudle.LayoutHouseActivity">
+    <!--选择房型界面-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+      <include layout="@layout/toolbar_null"
+          android:id="@+id/toolbar"/>
+        <include layout="@layout/speed_of_progress"
+           />
+        <LinearLayout
+            android:id="@+id/relative"
+            android:layout_width="1185px"
+            android:layout_height="163px"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="145px"
+            android:orientation="horizontal"
+            android:background="@drawable/blue_shape">
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:paddingBottom="26px"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33px"
+                    android:layout_marginLeft="81px"
+                    android:text="入住时间(今天)"
+                    android:textColor="@color/Swrite"
+                    android:textSize="22px" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/beginTime"
+                    android:layout_width="200px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="84px"
+                    android:textSize="30px"
+                    android:textColor="@color/Swrite" />
+            </LinearLayout>
+
+
+            <View
+                android:id="@+id/line1"
+                android:layout_width="2px"
+                android:layout_height="93px"
+                android:layout_gravity="center_vertical"
+                android:background="@color/Swrite" />
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingBottom="26px"
+                android:id="@+id/show_data">
+                <TextView
+                    android:id="@+id/tv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33px"
+                    android:layout_marginLeft="81px"
+                    android:text="离店时间"
+                    android:textColor="@color/Swrite"
+                    android:textSize="22px" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="84px"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/endTime"
+                        android:layout_width="200px"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv2"
+                        android:textColor="@color/Swrite"
+                        android:textSize="30px" />
+
+                    <ImageView
+                        android:id="@+id/imgdowm"
+                        android:layout_width="35px"
+                        android:layout_height="20px"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="15px"
+                        android:layout_marginLeft="18dp"
+                        android:src="@drawable/btn_dropdown" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:id="@+id/line2"
+                android:layout_width="2px"
+                android:layout_height="93px"
+                android:layout_gravity="center_vertical"
+                android:background="@color/Swrite" />
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="26px"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33px"
+                    android:layout_marginLeft="81px"
+                    android:text="共计时间"
+                    android:textColor="@color/Swrite"
+                    android:textSize="22px" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/content"
+                    android:layout_width="200px"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="84px"
+                    android:textSize="30px"
+                    android:textColor="@color/Swrite"
+                    tools:ignore="InvalidId" />
+            </LinearLayout>
+        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/relative"
+            android:layout_marginTop="20px"
+            android:scrollbars="none"
+            >
+        </android.support.v7.widget.RecyclerView>
+        <include layout="@layout/loading"/>
+    </RelativeLayout>
+</LinearLayout>

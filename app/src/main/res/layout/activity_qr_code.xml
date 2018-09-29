@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/beijing"
+    tools:context="com.sun.hotelproject.moudle.QrCodeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/translucent80"
+        android:layout_height="match_parent">
+    <include layout="@layout/toolbar_null"
+        android:id="@+id/toolbar"
+        />
+        <include layout="@layout/speed_of_progress"
+            android:id="@+id/linear_sp1"/>
+        <include layout="@layout/speed_of_progress2"
+            android:visibility="gone"
+            android:id="@+id/linear_sp2"/>
+        <include layout="@layout/speed_of_progress4"
+            android:visibility="gone"
+            android:id="@+id/linear_sp4"/>
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="229px"
+            android:layout_centerHorizontal="true"
+            android:textSize="50px"
+            android:textColor="@color/colorWrite"
+            android:text="请打开你的E证通二维码，放在识别区识别"/>
+
+   <LinearLayout
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="89px"
+       android:layout_centerInParent="true"
+       android:layout_below="@+id/title"
+       android:gravity="center"
+       android:orientation="horizontal">
+
+       <LinearLayout
+           android:layout_width="313px"
+           android:layout_height="547px"
+           android:gravity="center"
+           android:orientation="vertical"
+           android:background="@drawable/group2">
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textColor="@color/colorWrite"
+               android:text="我的E政通"/>
+           <ImageView
+               android:layout_width="198px"
+               android:layout_marginTop="18px"
+               android:layout_height="200px"
+               android:background="@drawable/page1"/>
+       </LinearLayout>
+       <ImageView
+           android:layout_width="74px"
+           android:layout_height="49px"
+           android:layout_marginLeft="113px"
+           android:background="@drawable/jiantou"/>
+       <ImageView
+           android:layout_width="369px"
+           android:layout_height="396px"
+           android:layout_marginLeft="97px"
+           android:background="@drawable/group"/>
+   </LinearLayout>
+        <include layout="@layout/loading"/>
+    </RelativeLayout>
+
+</LinearLayout>

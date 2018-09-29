@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="PxUsage,RtlHardcoded,HardcodedText">
+    <ImageView
+        android:id="@+id/toolBar_logo"
+        android:layout_width="271px"
+        android:layout_height="110px"
+        android:layout_marginTop="42px"
+        android:layout_marginLeft="74px"
+        android:background="@drawable/icon_logo"
+        />
+    <TextView
+        android:id="@+id/toolBarTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="60px"
+        android:visibility="gone"
+        android:textColor="@color/colorWrite"
+        android:layout_alignBottom="@id/toolBar_logo"
+        android:layout_centerHorizontal="true"/>
+    <Button
+        android:id="@+id/toolbarBack"
+        android:layout_width="200px"
+        android:layout_height="66px"
+        android:layout_marginTop="55px"
+        android:layout_marginRight="62px"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/btnclick_shape"
+        android:textSize="30px"
+        android:textColor="@color/colorWrite"
+        android:text="返回(30s)"
+        />
+</RelativeLayout>
