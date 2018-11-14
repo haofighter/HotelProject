@@ -136,7 +136,7 @@ public class CheckOutActivity extends BaseActivity {
         @Override
         public void run() {
             handler.postDelayed(this, 5 * 1000);//延迟5秒调用
-            isCheckedOut=true;//重置退房状态
+            isCheckedOut = true;//重置退房状态
             readCard();
         }
     };
@@ -247,8 +247,14 @@ public class CheckOutActivity extends BaseActivity {
                             String accountprice = qb.getAccountprice();
                             anim_lauout.setVisibility(View.GONE);
                             anim_img.clearAnimation();
+                            String cardType = "0";//默认不需要过安旅盒子
+                            try {
+                                cardType = response.body().getDatalist().get(0).getRmk();
+                            } catch (Exception e) {
+
+                            }
                             if (Constants.isTest) {
-                                checkOutRoom(qb.getInorderpmsno(), "141", accountprice, qb.getAddprice(), qb.getName());
+                                checkOutRoom(qb.getInorderpmsno(), "141", accountprice, qb.getAddprice(), qb.getName(), cardType);
                                 return;
                             }
                             if (Double.valueOf(accountprice) > 0) {
@@ -256,7 +262,7 @@ public class CheckOutActivity extends BaseActivity {
                                 getCard("请到前台办理退款手续");
                                 Tip.show(getApplicationContext(), "请到前台办理退款手续", true);
                             } else if (Double.valueOf(accountprice) == 0) {
-                                checkOutRoom(qb.getInorderpmsno(), "141", accountprice, qb.getAddprice(), qb.getName());
+                                checkOutRoom(qb.getInorderpmsno(), "141", accountprice, qb.getAddprice(), qb.getName(), cardType);
                             } else {
                                 if (accountprice.contains("-")) {
                                     accountprice = accountprice.replace("-", "");
@@ -294,7 +300,7 @@ public class CheckOutActivity extends BaseActivity {
     /**
      * 无消费，直接退房
      */
-    private void checkOutRoom(final String inorderpmsno, String payway, String ss, String addprice, final String name) {
+    private void checkOutRoom(final String inorderpmsno, String payway, String ss, String addprice, final String name, final String cardType) {
         orderId = DataTime.orderId();
         StringBuffer sb = new StringBuffer();
         sb.append("3").append("#").append(payway)
@@ -324,38 +330,52 @@ public class CheckOutActivity extends BaseActivity {
                         anim_img.clearAnimation();
                         // Log.d(TAG, "onSuccess() called with: response = [" + response.body().getDatalist().toString() + "]");
                         if (response1.body().getRescode().equals("0000")) {
-                            PoliceInfoSend.outHotel(response1.body().getSernumber(),
-                                    response1.body().getDocno(), response1.body().getRpmsno(), new BackCall() {
-                                        @Override
-                                        public void deal(String s) {
-                                            switch (s) {
-                                                case Constants.SUCCESS:
-                                                    Intent intent = new Intent(CheckOutActivity.this, PaySussecsActivity.class);
-                                                    intent.putExtra("k", k);
-                                                    intent.putExtra("name", name);
-                                                    intent.putExtra("orderId", orderId);
-                                                    intent.putExtra("payway", "无消费");
-                                                    intent.putExtra("price", "0.00");
-                                                    intent.putExtra("flag", "0");
-                                                    startActivity(intent);
-                                                    finish();
-                                                    break;
-                                                case Constants.ERROR:
-                                                    runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            getCard("公安校验失败!");
-                                                        }
-                                                    });
-                                                    break;
-                                            }
-                                        }
+//                            if (cardType.equals("0")) {//身份证 需要过安旅盒子
+//                                PoliceInfoSend.outHotel(response1.body().getSernumber(),
+//                                        response1.body().getDocno(), response1.body().getRpmsno(), new BackCall() {
+//                                            @Override
+//                                            public void deal(String s) {
+//                                                switch (s) {
+//                                                    case Constants.SUCCESS:
+//                                                        Intent intent = new Intent(CheckOutActivity.this, PaySussecsActivity.class);
+//                                                        intent.putExtra("k", k);
+//                                                        intent.putExtra("name", name);
+//                                                        intent.putExtra("orderId", orderId);
+//                                                        intent.putExtra("payway", "无消费");
+//                                                        intent.putExtra("price", "0.00");
+//                                                        intent.putExtra("flag", "0");
+//                                                        startActivity(intent);
+//                                                        finish();
+//                                                        break;
+//                                                    case Constants.ERROR:
+//                                                        runOnUiThread(new Runnable() {
+//                                                            @Override
+//                                                            public void run() {
+//                                                                getCard("公安校验失败!");
+//                                                            }
+//                                                        });
+//                                                        break;
+//                                                }
+//                                            }
+//
+//                                            @Override
+//                                            public void deal(Object s) {
+//
+//                                            }
+//                                        });
+//                            } else {
+                            Intent intent = new Intent(CheckOutActivity.this, PaySussecsActivity.class);
+                            intent.putExtra("k", k);
+                            intent.putExtra("name", name);
+                            intent.putExtra("orderId", orderId);
+                            intent.putExtra("payway", "无消费");
+                            intent.putExtra("price", "0.00");
+                            intent.putExtra("flag", "0");
+                            startActivity(intent);
+                            finish();
+//                            }
 
-                                        @Override
-                                        public void deal(Object s) {
 
-                                        }
-                                    });
                         } else {
                             anim_lauout.setVisibility(View.GONE);
                             anim_img.clearAnimation();

@@ -24,20 +24,23 @@ import java.io.File;
 import static com.lzy.okgo.model.Progress.TAG;
 
 public class FaceHttp {
-   private FaceHttp(){}
-  private static FaceHttp faceHttp;
-   public static FaceHttp getInstance(){
-       if(faceHttp==null){
-           faceHttp=new FaceHttp();
-       }
-       return faceHttp;
-   }
+    private FaceHttp() {
+    }
+
+    private static FaceHttp faceHttp;
+
+    public static FaceHttp getInstance() {
+        if (faceHttp == null) {
+            faceHttp = new FaceHttp();
+        }
+        return faceHttp;
+    }
 
     /**
      * 生成流水号
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public  void cofimface(final IDCardInfo idCardInfo, final String path, final BackCall backCall) {
+    public void cofimface(final IDCardInfo idCardInfo, final String path, final BackCall backCall) {
         OkGo.<SeqNo>get(HttpUrl.SEQNO)
                 .tag(App.getInstance())
                 .execute(new JsonCallBack<SeqNo>(SeqNo.class) {
@@ -45,7 +48,7 @@ public class FaceHttp {
                     public void onSuccess(Response<SeqNo> response) {
                         super.onSuccess(response);
                         if (response.body().getRescode().equals("00") && response.body().getRetcode().equals("0")) {
-                            Post(response.body().getSeq_no(), response.body().getAccount(), path, idCardInfo,backCall);
+                            Post(response.body().getSeq_no(), response.body().getAccount(), path, idCardInfo, backCall);
                         } else {
                             backCall.deal(Constants.ERROR);
                             Tip.show(App.getInstance(), response.body().getRetmsg(), false);
@@ -62,12 +65,13 @@ public class FaceHttp {
     }
 
     /**
-     //     * 人脸识别
-     //     *
-     //     * @param seq_no  流水号
-     //     * @param account 账号
-     //     */
-    private  void Post(String seq_no, String account, String path, final IDCardInfo idCardInfo, final BackCall backCall) {
+     * //     * 人脸识别
+     * //     *
+     * //     * @param seq_no  流水号
+     * //     * @param account 账号
+     * //
+     */
+    private void Post(String seq_no, String account, String path, final IDCardInfo idCardInfo, final BackCall backCall) {
         OkGo.<FaceRecognition>post(HttpUrl.FACERECOQNITION)
                 .tag(App.getInstance())
                 .retryCount(3)//超时重连次数
@@ -116,6 +120,7 @@ public class FaceHttp {
 
                     @Override
                     public void onError(Response<FaceRecognition> response) {
+                        backCall.deal(Constants.ERROR);
                         Log.d(TAG, "人脸识别onSuccess() called with: response = [" + response.body() + "]");
                         Tip.show(App.getInstance(), "服务器连接异常", false);
                     }

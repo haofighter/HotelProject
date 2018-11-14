@@ -131,17 +131,12 @@ public class IdentificationActivity extends BaseActivity {
                     // handler.removeCallbacks(task);
                     Log.e(TAG, "handleMessage: " + idCardInfo.toString());
                     if (isIntent) {
-                        if (k.equals("1") || k.equals("999")) {
-                            Intent intent = new Intent();
-                            if(Constants.isTest){
-                                intent = new Intent(IdentificationActivity.this, PhoneMsg.class);
-                            }else{
-                                intent = new Intent(IdentificationActivity.this, FaceRecognitionActivity.class);
-                            }
+                        if (k.equals("1")) {
+                            Intent intent = new Intent(IdentificationActivity.this, FaceRecognitionActivity.class);
                             intent.putExtra("bean", gBean);
                             intent.putExtra("locksign", locksign);
                             intent.putExtra("mchid", mchid);
-                            intent.putExtra("name", idCardInfo.getStrName());
+                            intent.putExtra("name", idCardInfo.getStrName().replace(" ", ""));
                             intent.putExtra("idCard", idCardInfo);
                             intent.putExtra("id_CardNo", idCardInfo.getStrIdCode());
                             intent.putExtra("k", k);
@@ -202,7 +197,7 @@ public class IdentificationActivity extends BaseActivity {
     @Override
     public void toolBacBcak() {
         super.toolBacBcak();
-        HotelHttp.  cancalLockRoom(k,gBean,mchid);
+        HotelHttp.cancalLockRoom(k, gBean, mchid);
     }
 
 //    /**
@@ -305,15 +300,11 @@ public class IdentificationActivity extends BaseActivity {
         if (k.equals("1")) {
             linear_sp4.setVisibility(View.GONE);
             linear_sp2.setVisibility(View.GONE);
-            sp_img4.setVisibility(View.VISIBLE);
-            sp_tv4.setBackgroundResource(R.drawable.oval_shape);
-            sp_tv4.setTextColor(getResources().getColor(R.color.Swrite));
-            gBean = (GuestRoom.Bean) getIntent().getSerializableExtra("bean");
-            locksign = getIntent().getStringExtra("locksign");
-        } else if (k.equals("999")) {
-            linear_sp4.setVisibility(View.GONE);
-            linear_sp2.setVisibility(View.GONE);
-            sp_content4.setText("身份证验证");
+            if (Constants.USE_IDCARD) {
+                sp_content4.setText("身份证验证");
+            } else {
+                sp_content4.setText("E证通");
+            }
             sp_img4.setVisibility(View.VISIBLE);
             sp_tv4.setBackgroundResource(R.drawable.oval_shape);
             sp_tv4.setTextColor(getResources().getColor(R.color.Swrite));
@@ -325,14 +316,18 @@ public class IdentificationActivity extends BaseActivity {
             sp2_img3.setVisibility(View.VISIBLE);
             sp2_tv3.setTextColor(getResources().getColor(R.color.Swrite));
             sp2_tv3.setBackgroundResource(R.drawable.oval_shape);
-            sp2_content3.setText("身份证");
+            if (Constants.USE_IDCARD) {
+                sp2_content3.setText("身份证验证");
+            } else {
+                sp2_content3.setText("E证通");
+            }
             querytype = getIntent().getStringExtra("querytype");
         } else if (k.equals("4")) {
             querytype = getIntent().getStringExtra("querytype");
             StringUtils.setCorlor(sp4_tv3, sp4_img3, sp4_content3, querytype);
             linear_sp1.setVisibility(View.GONE);
             linear_sp2.setVisibility(View.GONE);
-             qBean = (QueryBookOrder.Bean) getIntent().getSerializableExtra("bean");
+            qBean = (QueryBookOrder.Bean) getIntent().getSerializableExtra("bean");
 //            if (querytype.equals("")) {
 //
 //                linear_sp1.setVisibility(View.GONE);
@@ -350,6 +345,7 @@ public class IdentificationActivity extends BaseActivity {
 //                sp4_content3.setText("姓名");
 //            }
         }
+
         Card_Sender my_Card_Sender = new Card_Sender();
         int[] nStatus = new int[1];
         boolean zt = my_Card_Sender.TY_GetStatus(nStatus);
@@ -362,7 +358,7 @@ public class IdentificationActivity extends BaseActivity {
     void OnClick() {
         isIntent = false;
         // handler.removeCallbacks(task);
-        HotelHttp.  cancalLockRoom(k,gBean,mchid);
+        HotelHttp.cancalLockRoom(k, gBean, mchid);
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }

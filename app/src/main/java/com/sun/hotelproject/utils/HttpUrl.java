@@ -10,7 +10,7 @@ public class HttpUrl {
 // "http://118.89.152.33:8080";
 //    public static final String SEQNO = "/bipwlt/facerec/seqNo";
 //    public static final String FACERECOQNITION = "/bipwlt/facerec/faceRecognition";
-    //private static final String URL = "http://139.199.158.253";
+//    private static final String URL = "http://139.199.158.253";
     private static final String URL = "http://134.175.56.14";
     public static final String SEQNO = URL + "/biphotel/facerec/seqNo";
     public static final String FACERECOQNITION = URL + "/biphotel/facerec/faceRecognition";

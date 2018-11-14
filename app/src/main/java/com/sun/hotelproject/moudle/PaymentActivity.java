@@ -19,10 +19,12 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
+import com.net.md5.Constant;
 import com.squareup.picasso.Picasso;
 import com.sun.hotelproject.R;
 import com.sun.hotelproject.app.App;
 import com.sun.hotelproject.app.BackCall;
+import com.sun.hotelproject.app.Constants;
 import com.sun.hotelproject.base.BaseActivity;
 import com.sun.hotelproject.entity.Affirmstay;
 import com.sun.hotelproject.entity.Draw;
@@ -201,7 +203,8 @@ public class PaymentActivity extends BaseActivity {
                 // check_inTime.setText(stratTime + "——" + finsihTime + "   " + content);
                 try {
                     tv20.setText(gBean.getRpmsno());
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
                 house_type.setText(house_name);
                 parson_name.setText(name);
                 Log.e(TAG, "initView: " + name + id_CardNo + phoneNum);
@@ -227,7 +230,8 @@ public class PaymentActivity extends BaseActivity {
                 // check_inTime.setText(stratTime + "——" + finsihTime + "   " + content);
                 try {
                     tv20.setText(gBean.getRpmsno());
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
                 house_type.setText(house_name);
                 parson_name.setText(name);
                 Log.e(TAG, "initView: " + name + id_CardNo + phoneNum);
@@ -300,12 +304,12 @@ public class PaymentActivity extends BaseActivity {
                     price.setText(DataTime.updTextSize2(getApplicationContext(), "￥" + (housePrice - payPrice), 1), TextView.BufferType.SPANNABLE);
                 }
                 Log.e(TAG, "initView: querytype--->" + querytype);
-            //    if (payPrice < housePrice) {
-              //      String price = String.valueOf((housePrice - payPrice));
-              //      Scanpay2(payway, "0", price, phoneNum);
-             //   } else {
-                    Scanpay3(payway, "0", phoneNum);
-              //  }
+                //    if (payPrice < housePrice) {
+                //      String price = String.valueOf((housePrice - payPrice));
+                //      Scanpay2(payway, "0", price, phoneNum);
+                //   } else {
+                Scanpay3(payway, "0", phoneNum);
+                //  }
                 break;
             default:
                 break;
@@ -325,7 +329,8 @@ public class PaymentActivity extends BaseActivity {
                 break;
             case R.id.retry:
                 intent = new Intent(PaymentActivity.this, FaceRecognitionActivity.class);
-                intent.putExtra("k", "5");intent.putExtra("mchid", mchid);
+                intent.putExtra("k", "5");
+                intent.putExtra("mchid", mchid);
                 startActivityForResult(intent, 1);
                 relative_3.setVisibility(View.GONE);
                 // finish();
@@ -535,6 +540,7 @@ public class PaymentActivity extends BaseActivity {
                 .params("addprice", addPirce)
                 .params("accountrmk", "")
                 .params("breaknum", "0002")
+                .params("rmk", Constants.USE_IDCARD ? "0" : "1")
                 .execute(new JsonCallBack<Draw>(Draw.class) {
                     @Override
                     public void onSuccess(Response<Draw> response) {
@@ -645,16 +651,29 @@ public class PaymentActivity extends BaseActivity {
         // String arprice = String.valueOf(Double.valueOf(gBean.getDealprice()) * inDay);
         StringBuffer sb = new StringBuffer();
 
-        sb.append(name);
-        sb.append("#").append("1");
-        sb.append("#").append(id_CardNo);//证件号
-        sb.append("#").append(idCardInfo == null ? "" : Utils.checkNation(idCardInfo.getStrNation()));//民族
-        sb.append("#").append(idCardInfo.getStrSex() % 2 == 0 ? "女" : "男");//性别
-        sb.append("#").append(idCardInfo.getStrAddr());//住址
-        StringBuffer stringBuffer = new StringBuffer();
-        sb.append("#").append(stringBuffer.append(idCardInfo.getStrBirth()).insert(4, "-").insert(7, "-"));//出生
-        sb.append("#");//姓名全拼
-        sb.append("#");
+        if (Constants.USE_IDCARD) {
+            sb.append(name);
+            sb.append("#").append("1");
+            sb.append("#").append(id_CardNo);//证件号
+            sb.append("#").append(idCardInfo == null ? "" : Utils.checkNation(idCardInfo.getStrNation()));//民族
+            sb.append("#").append(idCardInfo.getStrSex() % 2 == 0 ? "女" : "男");//性别
+            sb.append("#").append(idCardInfo.getStrAddr());//住址
+            StringBuffer stringBuffer = new StringBuffer();
+            sb.append("#").append(stringBuffer.append(idCardInfo.getStrBirth()).insert(4, "-").insert(7, "-"));//出生
+            sb.append("#");//姓名全拼
+            sb.append("#");
+        } else {
+            sb.append(name);
+            sb.append("#").append("1");
+            sb.append("#").append(id_CardNo);//证件号
+            sb.append("#").append("");//民族
+            sb.append("#").append(Integer.parseInt(id_CardNo.substring(id_CardNo.length() - 2, id_CardNo.length() - 1)) % 2 == 0 ? "女" : "男");//性别
+            sb.append("#").append("");//住址
+            StringBuffer stringBuffer = new StringBuffer();
+            sb.append("#").append(stringBuffer.append(id_CardNo.substring(6, 14)).insert(4, "-").insert(7, "-"));//出生
+            sb.append("#");//姓名全拼
+            sb.append("#");
+        }
 
         String price = String.valueOf(Double.valueOf(gBean.getDealprice()) * inDay);
         StringBuffer sb1 = new StringBuffer();
@@ -686,7 +705,7 @@ public class PaymentActivity extends BaseActivity {
                 .params("cardnum", "1")
                 .params("dutypmsno", "1")
                 .params("ordertype", "6")
-                .params("rmk", "")
+                .params("rmk", Constants.USE_IDCARD ? "0" : "1")
                 .params("locksign", locksign)
                 .params("arprice", price)
                 .params("payinfo", String.valueOf(sb1))
@@ -773,7 +792,7 @@ public class PaymentActivity extends BaseActivity {
                 .params("cardnum", "1")
                 .params("dutypmsno", "1")
                 .params("ordertype", "6")
-                .params("rmk", "")
+                .params("rmk", Constants.USE_IDCARD ? "0" : "1")
                 .params("locksign", locksign)
                 .params("arprice", price)
                 .params("payinfo", String.valueOf(sb1))
@@ -913,7 +932,12 @@ public class PaymentActivity extends BaseActivity {
                     public void onSuccess(final Response<Draw> response) {
                         super.onSuccess(response);
                         if (response.body().getRescode().equals("0000")) {
-                            policeInfoSend(response.body());
+                            if (Constants.USE_IDCARD) {
+//                                policeInfoSend(response.body()); //入住盒子
+                                paySucAction();
+                            } else {
+                                paySucAction();
+                            }
                         } else {
                             Log.e(TAG, "onSuccess: " + response.body().getResult());
                         }
@@ -930,37 +954,17 @@ public class PaymentActivity extends BaseActivity {
 
 
     //接通公安数据
-    public void policeInfoSend(final Draw draw){
+    public void policeInfoSend(final Draw draw) {
         PoliceInfoSend.getPoliceserialNumber(new BackCall() {
             @Override
             public void deal(String s) {
                 PoliceInfoSend.sendSernumber(draw, s, mchid, orderId, new BackCall() {
                     @Override
                     public void deal(String s) {
-                        if(s.equals("")){
-                            Intent intent = new Intent(PaymentActivity.this, PaySussecsActivity.class);
-                            intent.putExtra("k", k);
-                            intent.putExtra("name", name);
-                            intent.putExtra("orderId", orderId);
-                            intent.putExtra("payway", "微信支付");
-                            intent.putExtra("price", price.getText().toString());
-                            if (k.equals("2")) {
-                                intent.putExtra("querytype", querytype);
-                            } else if (k.equals("3")) {
-                                intent.putExtra("flag", "1");
-                            } else if (k.equals("4")) {
-                                anim_img.clearAnimation();
-                                anim_lauout.setVisibility(View.GONE);
-                                linearLayout.setVisibility(View.VISIBLE);
-                                intent.putExtra("payway", "线上支付");
-                                intent.putExtra("price", "0.00");
-                                intent.putExtra("querytype", querytype);
-                            }
-                            startActivity(intent);
-                            handler.removeCallbacks(task);
-                            finish();
-                        }else{
-                            Tip.show(App.getInstance(),"公安数据接入失败，请联系前台",false);
+                        if (s.equals("")) {
+                            paySucAction();
+                        } else {
+                            Tip.show(App.getInstance(), "公安数据接入失败，请联系前台", false);
                         }
                     }
 
@@ -976,6 +980,31 @@ public class PaymentActivity extends BaseActivity {
 
             }
         });
+    }
+
+    //支付成功后的操作
+    public void paySucAction() {
+        Intent intent = new Intent(PaymentActivity.this, PaySussecsActivity.class);
+        intent.putExtra("k", k);
+        intent.putExtra("name", name);
+        intent.putExtra("orderId", orderId);
+        intent.putExtra("payway", "微信支付");
+        intent.putExtra("price", price.getText().toString());
+        if (k.equals("2")) {
+            intent.putExtra("querytype", querytype);
+        } else if (k.equals("3")) {
+            intent.putExtra("flag", "1");
+        } else if (k.equals("4")) {
+            anim_img.clearAnimation();
+            anim_lauout.setVisibility(View.GONE);
+            linearLayout.setVisibility(View.VISIBLE);
+            intent.putExtra("payway", "线上支付");
+            intent.putExtra("price", "0.00");
+            intent.putExtra("querytype", querytype);
+        }
+        startActivity(intent);
+        handler.removeCallbacks(task);
+        finish();
     }
 
 

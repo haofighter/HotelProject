@@ -3,49 +3,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="PxUsage"
-    >
+    tools:ignore="PxUsage">
 
     <!--<include layout="@layout/toolbar_null"-->
-        <!--android:id="@+id/toolbar"/>-->
+    <!--android:id="@+id/toolbar"/>-->
     <TextView
         android:id="@+id/tishi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorWrite"
-        android:layout_marginTop="184px"
         android:layout_centerHorizontal="true"
-        android:textSize="46px"
-        android:text="@string/tishi2"/>
+        android:layout_marginTop="184px"
+        android:text="@string/tishi2"
+        android:textColor="@color/colorWrite"
+        android:textSize="46px" />
+
     <ImageView
         android:id="@+id/img"
         android:layout_width="288px"
         android:layout_height="255px"
-        android:layout_marginTop="501px"
         android:layout_marginLeft="221px"
+        android:layout_marginTop="501px"
         android:background="@drawable/img_avatartwo"
         tools:ignore="RtlHardcoded" />
+
     <SurfaceView
         android:id="@+id/camera_preview"
         android:layout_width="808px"
-        android:layout_toRightOf="@id/img"
-        android:layout_marginBottom="64px"
-        android:layout_marginLeft="66px"
-        android:background="@color/transparent"
-        android:layout_below="@id/tishi"
-        android:layout_marginTop="50px"
         android:layout_height="759px"
+        android:layout_below="@id/tishi"
+        android:layout_marginLeft="66px"
+        android:layout_marginTop="50px"
+        android:layout_marginBottom="64px"
+        android:layout_toRightOf="@id/img"
+        android:background="@color/transparent"
         tools:ignore="RtlHardcoded" />
 
     <RelativeLayout
         android:id="@+id/face"
         android:layout_width="808px"
+        android:layout_height="759px"
         android:layout_below="@id/tishi"
+        android:layout_marginLeft="66px"
         android:layout_marginTop="50px"
         android:layout_marginBottom="64px"
         android:layout_toRightOf="@id/img"
-        android:layout_marginLeft="66px"
         android:background="@drawable/img_avatar"
-        android:layout_height="759px"
         tools:ignore="RtlHardcoded" />
+
+    <include layout="@layout/loading" />
 </RelativeLayout>

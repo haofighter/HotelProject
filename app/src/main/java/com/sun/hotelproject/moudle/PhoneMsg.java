@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.sun.hotelproject.R;
 import com.sun.hotelproject.app.App;
 import com.sun.hotelproject.app.BackCall;
+import com.sun.hotelproject.app.Constants;
 import com.sun.hotelproject.base.BaseActivity;
 import com.sun.hotelproject.entity.GuestRoom;
 import com.sun.hotelproject.entity.QueryBookOrder;
@@ -115,16 +116,12 @@ public class PhoneMsg extends BaseActivity {
                 gBean = (GuestRoom.Bean) getIntent().getSerializableExtra("bean");
                 locksign = getIntent().getStringExtra("locksign");
                 name = getIntent().getStringExtra("name");
-                cardID = getIntent().getStringExtra("card_id");
-                break;
-            case "999":
-                StringUtils.setCorlor(sp_tv6, sp_img6);
-                gBean = (GuestRoom.Bean) getIntent().getSerializableExtra("bean");
-                locksign = getIntent().getStringExtra("locksign");
-                name = getIntent().getStringExtra("name");
-                cardID = getIntent().getStringExtra("card_id");
-                IDCardInfo idCardInfo = getIntent().getParcelableExtra("idCard");
-                cardID = idCardInfo.getStrIdCode();
+                if (Constants.USE_IDCARD) {
+                    IDCardInfo idCardInfo = getIntent().getParcelableExtra("idCard");
+                    cardID = idCardInfo.getStrIdCode();
+                } else {
+                    cardID = getIntent().getStringExtra("card_id");
+                }
                 Log.e(TAG, "initData: " + name + cardID);
                 break;
             case "4":
@@ -225,32 +222,32 @@ public class PhoneMsg extends BaseActivity {
                 state = 1;
                 break;
             case R.id.phone_bt:
-                       if (Utils.isPhone(phone_et.getText().toString().trim())) {
-                //          CodeInfo.smsCheck(this, phone_et.getText().toString().trim(), input_code.getText().toString().trim(), new BackCall() {
-                //            @Override
-                //          public void deal(String s) {
+                if (Utils.isPhone(phone_et.getText().toString().trim())) {
+                    //          CodeInfo.smsCheck(this, phone_et.getText().toString().trim(), input_code.getText().toString().trim(), new BackCall() {
+                    //            @Override
+                    //          public void deal(String s) {
 
-                //        }
+                    //        }
 
-                //      @Override
-                //    public void deal(Object s) {   Intent intent = new Intent();
-                intent.setClass(PhoneMsg.this, PaymentActivity.class);
-                intent.putExtra("phoneNum", phone_et.getText().toString().trim());
-                intent.putExtra("name", name);
-                // intent.putExtra("path",path);
-                // intent.putExtra("birth",birth);
-                intent.putExtra("card_id", cardID);
-                intent.putExtra("bean", gBean);
-                intent.putExtra("locksign", locksign);
-                intent.putExtra("idCard", getIntent().getParcelableExtra("idCard"));
-                intent.putExtra("k", k);
-                startActivity(intent);
-                finish();
-                   // }
-                //     });
+                    //      @Override
+                    //    public void deal(Object s) {   Intent intent = new Intent();
+                    intent.setClass(PhoneMsg.this, PaymentActivity.class);
+                    intent.putExtra("phoneNum", phone_et.getText().toString().trim());
+                    intent.putExtra("name", name);
+                    // intent.putExtra("path",path);
+                    // intent.putExtra("birth",birth);
+                    intent.putExtra("card_id", cardID);
+                    intent.putExtra("bean", gBean);
+                    intent.putExtra("locksign", locksign);
+                    intent.putExtra("idCard", getIntent().getParcelableExtra("idCard"));
+                    intent.putExtra("k", k);
+                    startActivity(intent);
+                    finish();
+                    // }
+                    //     });
                 } else {
-                   Tip.show(App.getInstance(), "手机号格式错误", false);
-               }
+                    Tip.show(App.getInstance(), "手机号格式错误", false);
+                }
                 break;
             case R.id.skip_tv:
             case R.id.toolbarBack:

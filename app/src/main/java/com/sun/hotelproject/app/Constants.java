@@ -22,5 +22,10 @@ public class Constants {
     public final static String ERROR="error";//失败
     public final static String SUCCESS="success";//成功
 
+    public final static String USER_IN = "1";//入住
+    public final static String USER_OUT = "3";//退房
+    public final static String USER_SCHEDULE = "4";//预定
+    public static boolean USE_IDCARD = true;//是否使用身份证
+
 
 }

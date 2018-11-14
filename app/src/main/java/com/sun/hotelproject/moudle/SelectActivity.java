@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.sun.hotelproject.R;
+import com.sun.hotelproject.app.Constants;
 import com.sun.hotelproject.base.adapter.CommonAdapter;
 
 import com.sun.hotelproject.base.adapter.ViewHolder;
@@ -129,7 +130,7 @@ public class SelectActivity extends Activity {
         LinearInterpolator lin = new LinearInterpolator();
         operatingAnim.setInterpolator(lin);
         daoSimple = new DaoSimple(this);
-        if (k.equals("1") || k.equals("999")) {
+        if (k.equals("1")) {
             gList = (List<GuestRoom.Bean>) getIntent().getSerializableExtra("gList");
             name = getIntent().getStringExtra("name");
             mchid = getIntent().getStringExtra("mchid");

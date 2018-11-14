@@ -65,8 +65,8 @@ public class PoliceInfoSend {
 
                     GetUserInfoMap.put("authCode", Constants.policeCode.trim());
                     GetUserInfoMap.put("serialNumber", policeSerialNumber.getResult().trim());
-                    GetUserInfoMap.put("roomNumber",  orderDetalieInfo.getOrderlist().getRPMSNO().trim());//房间号
-                    GetUserInfoMap.put("phoneNumber",  orderDetalieInfo.getOrderlist().getTEL().trim());//手机号
+                    GetUserInfoMap.put("roomNumber", orderDetalieInfo.getOrderlist().getRPMSNO().trim());//房间号
+                    GetUserInfoMap.put("phoneNumber", orderDetalieInfo.getOrderlist().getTEL().trim());//手机号
                     GetUserInfoMap.put("remark", orderDetalieInfo.getOrderlist().getRMK());//备注
                     GetUserInfoMap.put("certificateNumber", orderDetalieInfo.getGuetlist().getDOCNO());//身份证
                     GetUserInfoMap.put("name", orderDetalieInfo.getGuetlist().getNAME().trim());//姓名
@@ -164,13 +164,6 @@ public class PoliceInfoSend {
                 });
 
 
-
-
-
-
-
-
-
     }
 
 
@@ -213,7 +206,7 @@ public class PoliceInfoSend {
                     GetUserInfoMap.put("mode", "2");
                     GetUserInfoMap.put("serialNumber", serialNumber);
                     GetUserInfoMap.put("certificateNumber", certificateNumber);
-                    GetUserInfoMap.put("roomNumber", Constants.isTest ? "101" : roomNumber);
+                    GetUserInfoMap.put("roomNumber", roomNumber);
 
                     MediaType JSON = MediaType.parse("application/json; charset=utf-8");
                     RequestBody body = RequestBody.create(JSON, new Gson().toJson(GetUserInfoMap));
@@ -224,12 +217,12 @@ public class PoliceInfoSend {
                             header("Content-Type", "application/json;charset=utf-8").post(body).build();
                     try {
                         Response response = client.newCall(request).execute();
-                        PoliceRespons policeRespons=new Gson().fromJson(response.body().string(),PoliceRespons.class);
-                        if(policeRespons.getCode()==200){
+                        PoliceRespons policeRespons = new Gson().fromJson(response.body().string(), PoliceRespons.class);
+                        if (policeRespons.getCode() == 200) {
                             backCall.deal(Constants.SUCCESS);
-                        }else{
+                        } else {
                             backCall.deal(Constants.ERROR);
-                          Tip.show(App.getInstance(),policeRespons.getMessage(),false);
+                            Tip.show(App.getInstance(), policeRespons.getMessage(), false);
                         }
                     } catch (IOException e) {
                         backCall.deal(Constants.ERROR);

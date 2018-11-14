@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
@@ -26,6 +28,8 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -34,8 +38,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -44,14 +52,20 @@ import com.sun.hotelproject.app.App;
 import com.sun.hotelproject.app.BackCall;
 import com.sun.hotelproject.base.BaseFragment;
 import com.sun.hotelproject.entity.Affirmstay;
+import com.sun.hotelproject.entity.E_politics;
 import com.sun.hotelproject.entity.GuestRoom;
 import com.sun.hotelproject.entity.LayoutHouse;
 import com.sun.hotelproject.entity.QueryBookOrder;
 import com.sun.hotelproject.entity.QueryCheckin;
+import com.sun.hotelproject.http.CallServer;
+import com.sun.hotelproject.http.HttpListener;
+import com.sun.hotelproject.http.JavaBeanRequest;
+import com.sun.hotelproject.moudle.FaceRecognitionActivity;
 import com.sun.hotelproject.moudle.IdentificationActivity;
 import com.sun.hotelproject.moudle.PaymentActivity;
 
 import com.sun.hotelproject.moudle.PhoneMsg;
+import com.sun.hotelproject.moudle.QrCodeActivity;
 import com.sun.hotelproject.moudle.camera.control.CameraControl;
 import com.sun.hotelproject.moudle.camera.control.CameraControlCallback;
 import com.sun.hotelproject.moudle.camera.control.SetParametersException;
@@ -60,22 +74,45 @@ import com.sun.hotelproject.moudle.camera.tools.MyMath;
 import com.sun.hotelproject.moudle.id_card.IDCardInfo;
 import com.sun.hotelproject.app.Constants;
 import com.sun.hotelproject.moudle.net.FaceHttp;
+import com.sun.hotelproject.utils.HttpUrl;
+import com.sun.hotelproject.utils.Tip;
+import com.yanzhenjie.nohttp.rest.Response;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 
 import static com.sun.hotelproject.utils.PlaySound.play;
+import static com.sun.hotelproject.utils.StringUtils.byteArrayToShort;
+import static com.sun.hotelproject.utils.StringUtils.byteArrayTos;
+import static com.sun.hotelproject.utils.StringUtils.getSign;
+import static com.sun.hotelproject.utils.StringUtils.getSubKey;
+import static com.sun.hotelproject.utils.pulicKey.appid;
 
 public class CameraFragment extends BaseFragment implements SensorEventListener
         , PictureCallback, CameraControlCallback {
     private static final String TAG = "CameraFragment";
+    Animation operatingAnim;
     @BindView(R.id.face)
     RelativeLayout mFaceLayout;
     @BindView(R.id.camera_preview)
     SurfaceView mCameraPreView;
+    @BindView(R.id.anim_layout)
+    RelativeLayout animLayout;
+    @BindView(R.id.anim_img)
+    ImageView anim_img;
+    @BindView(R.id.anim_tv)
+    TextView anim_tv;
     //@BindView(R.id.time_tv)TextView time;
     //@BindView(R.id.speed_of_progress)ImageView speed_of_progress;
     private LayoutHouse house;
@@ -102,7 +139,8 @@ public class CameraFragment extends BaseFragment implements SensorEventListener
     private Affirmstay.Bean ab;
     private QueryBookOrder.Bean qBean;
     private boolean flag = false;
-    private String qrCode, record;
+    private String qrCode, record, EIDtype, entry_into_force_time, Effective_time_length;
+
 
     @Override
     protected int layoutID() {
@@ -122,32 +160,36 @@ public class CameraFragment extends BaseFragment implements SensorEventListener
     @Override
     protected void initData() {
         //speed_of_progress.setImageResource(R.drawable.home_five);
+        operatingAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.load_animation);
+        LinearInterpolator lin = new LinearInterpolator();
+        operatingAnim.setInterpolator(lin);
         Bundle bundle = this.getArguments();
         k = bundle.getString("k");
         assert k != null;
         switch (k) {
             case "1":
-
-                name = bundle.getString("name");
-                birth = bundle.getString("birth");
-                id_CardNo = bundle.getString("id_CardNo");
-                gBean = (GuestRoom.Bean) bundle.getSerializable("bean");
-                locksign = bundle.getString("locksign");
-                break;
-            case "999":
-                name = bundle.getString("name");
-                birth = bundle.getString("birth");
-                id_CardNo = bundle.getString("id_CardNo");
-                gBean = (GuestRoom.Bean) bundle.getSerializable("bean");
-                locksign = bundle.getString("locksign");
-                mchid = bundle.getString("mchid");
-                idCardInfo = bundle.getParcelable("idCard");
+                if (Constants.USE_IDCARD) {
+                    name = bundle.getString("name");
+                    birth = bundle.getString("birth");
+                    id_CardNo = bundle.getString("id_CardNo");
+                    gBean = (GuestRoom.Bean) bundle.getSerializable("bean");
+                    locksign = bundle.getString("locksign");
+                    mchid = bundle.getString("mchid");
+                    idCardInfo = bundle.getParcelable("idCard");
+                } else {
+                    qrCode = bundle.getString("qrcode");
+                    mchid = bundle.getString("mchid");
+                    gBean = (GuestRoom.Bean) bundle.getSerializable("bean");
+                    locksign = bundle.getString("locksign");
+                    EIDtype = bundle.getString("EIDtype");
+                    entry_into_force_time = bundle.getString("entry_into_force_time");
+                    Effective_time_length = bundle.getString("Effective_time_length");
+                }
                 break;
             case "2":
                 b = (QueryCheckin.Bean) bundle.getSerializable("bean");
                 querytype = bundle.getString("querytype");
                 ab = (Affirmstay.Bean) bundle.getSerializable("bean2");
-
                 break;
             case "4":
                 name = bundle.getString("name");
@@ -209,7 +251,7 @@ public class CameraFragment extends BaseFragment implements SensorEventListener
                         //	intent.putExtra("k", k);
                         //	getActivity().setResult(Activity.RESULT_OK, intent);
                         //	//	getActivity().finish();
-                        sendPicture(Environment.getExternalStorageDirectory()+"/renzhen.jpg");
+                        sendPicture(Environment.getExternalStorageDirectory() + "/renzhen.jpg");
                     } else {
                         mCameraControl.takePicture(CameraFragment.this, (int) MyMath.doDegress(90 - MyMath.orientationToDegress(mOrientation)));
                     }
@@ -421,9 +463,10 @@ public class CameraFragment extends BaseFragment implements SensorEventListener
                         mHandler.removeCallbacks(timerRunnable);
                         Log.e(TAG, "onPictureTaken: " + picturePath);
                     }
-                    sendPicture(picturePath);
+                    Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+                    saveBitmapFile(scaleBitmap(bitmap), picturePath);
                     Log.e(TAG, "人脸识别: " + k);
-
+                    sendPicture(picturePath);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -434,53 +477,51 @@ public class CameraFragment extends BaseFragment implements SensorEventListener
         }
     }
 
+    public void saveBitmapFile(Bitmap bitmap, String path) {
+        File file = new File(path);//将要保存图片的路径
+
+        BufferedOutputStream bos = null;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 根据给定的宽和高进行拉伸
+     *
+     * @param origin 原图
+     * @return new Bitmap
+     */
+    private Bitmap scaleBitmap(Bitmap origin) {
+        if (origin == null) {
+            return null;
+        }
+        int height = origin.getHeight();
+        int width = origin.getWidth();
+        Bitmap newBM = Bitmap.createBitmap(origin, width * 1 / 5, 0, width * 3 / 5, height);
+        if (!origin.isRecycled()) {
+            origin.recycle();
+        }
+        return newBM;
+    }
+
 
     //验证图片
     public void sendPicture(String picturePath) {
         Intent intent;
         switch (k) {
             case "1":
-            case "999":
-                FaceHttp.getInstance().cofimface(idCardInfo, picturePath, new BackCall() {
-                    @Override
-                    public void deal(String s) {
-                        switch (s) {
-                            case Constants.SUCCESS:
-                                play(R.raw.shibei_success, App.getInstance());
-                                Intent intent = new Intent(App.getInstance(), PhoneMsg.class);
-                                intent.putExtra("name", name);
-                                intent.putExtra("birth", birth);
-                                intent.putExtra("id_CardNo", id_CardNo);
-                                intent.putExtra("idCard", idCardInfo);
-                                intent.putExtra("bean", gBean);
-                                intent.putExtra("locksign", locksign);
-                                intent.putExtra("k", k);
-                                App.getInstance().getNowActivity().startActivity(intent);
-                                App.getInstance().getNowActivity().finish();
-                                break;
-                            case Constants.ERROR:
-                                        Intent eintent = new Intent(App.getInstance(), IdentificationActivity.class);
-                                        eintent.putExtra("bean", gBean);
-                                        eintent.putExtra("locksign", locksign);
-                                        eintent.putExtra("mchid", mchid);
-                                        eintent.putExtra("name", idCardInfo.getStrName());
-                                        eintent.putExtra("idCard", idCardInfo);
-                                        eintent.putExtra("id_CardNo", idCardInfo.getStrIdCode());
-                                        eintent.putExtra("k", k);
-                                App.getInstance().getNowActivity(). startActivity(eintent);
-                                App.getInstance().getNowActivity().finish();
-                                play(R.raw.shibei_fail, App.getInstance());
-                                break;
-                        }
-
-                    }
-
-                    @Override
-                    public void deal(Object s) {
-
-                    }
-                });
-
+                if (Constants.USE_IDCARD) {
+                    CheckPictrueByIDCARD(picturePath);
+                } else {
+                    CheckPictrueByQRCODE(picturePath, qrCode);
+                }
 //				intent = new Intent(getActivity(), PhoneMsg.class);
 //				intent.putExtra("path", picturePath);
 //				intent.putExtra("name", name);
@@ -513,7 +554,7 @@ public class CameraFragment extends BaseFragment implements SensorEventListener
                 intent.putExtra("idCard", idCardInfo);
                 intent.putExtra("bean", qBean);
                 intent.putExtra("k", k);
-                App.getInstance().getNowActivity(). startActivity(intent);
+                App.getInstance().getNowActivity().startActivity(intent);
                 getActivity().finish();
                 //	intent = new Intent();
                 //	intent.putExtra("path", picturePath);
@@ -532,6 +573,131 @@ public class CameraFragment extends BaseFragment implements SensorEventListener
 
     }
 
+    //拍照获取图片后 进行图片验证
+    private void CheckPictrueByIDCARD(String picturePath) {
+        animLayout.setVisibility(View.VISIBLE);
+        anim_img.setAnimation(operatingAnim);
+        anim_img.startAnimation(operatingAnim);
+        anim_tv.setText("人脸识别中");
+        FaceHttp.getInstance().cofimface(idCardInfo, picturePath, new BackCall() {
+            @Override
+            public void deal(String s) {
+                switch (s) {
+                    case Constants.SUCCESS:
+                        animLayout.setVisibility(View.GONE);
+                        play(R.raw.shibei_success, App.getInstance());
+                        Intent intent = new Intent(App.getInstance(), PhoneMsg.class);
+                        intent.putExtra("name", name);
+                        intent.putExtra("birth", birth);
+                        intent.putExtra("id_CardNo", id_CardNo);
+                        intent.putExtra("idCard", idCardInfo);
+                        intent.putExtra("bean", gBean);
+                        intent.putExtra("locksign", locksign);
+                        intent.putExtra("k", k);
+                        App.getInstance().getNowActivity().startActivity(intent);
+                        App.getInstance().getNowActivity().finish();
+                        break;
+                    case Constants.ERROR:
+                        animLayout.setVisibility(View.GONE);
+                        Tip.show(getActivity(), "匹配失败,请重试", false);
+                        Intent eintent = new Intent(App.getInstance(), IdentificationActivity.class);
+                        eintent.putExtra("bean", gBean);
+                        eintent.putExtra("locksign", locksign);
+                        eintent.putExtra("mchid", mchid);
+                        eintent.putExtra("name", idCardInfo.getStrName());
+                        eintent.putExtra("idCard", idCardInfo);
+                        eintent.putExtra("id_CardNo", idCardInfo.getStrIdCode());
+                        eintent.putExtra("k", k);
+                        App.getInstance().getNowActivity().startActivity(eintent);
+                        App.getInstance().getNowActivity().finish();
+                        play(R.raw.shibei_fail, App.getInstance());
+                        break;
+                }
+
+            }
+
+            @Override
+            public void deal(Object s) {
+                getActivity().finish();
+                animLayout.setVisibility(View.GONE);
+                Tip.show(getActivity(), "匹配失败,请重试", false);
+            }
+        });
+    }
+
+    /**
+     * E政通接口请求
+     */
+    void CheckPictrueByQRCODE(String path, String qRcode) {
+        animLayout.setVisibility(View.VISIBLE);
+        anim_img.setAnimation(operatingAnim);
+        anim_img.startAnimation(operatingAnim);
+        anim_tv.setText("人脸识别中");
+        Map<String, Object> map = new HashMap<>();
+        map.put("appid", appid);
+        map.put("qr_code", qRcode);
+        if (Constants.isTest) {
+            map.put("imgB64", new File(Environment.getExternalStorageDirectory() + "/renzheng.jpg"));
+        } else {
+            map.put("imgB64", new File(path));
+        }
+        map.put("qrcodeid", qRcode.substring(5));
+        map.put("eid", EIDtype + "");
+        map.put("createtime", entry_into_force_time);
+        map.put("validtime", Effective_time_length);
+        Log.e(TAG, "epccomcation: " + map.toString());
+        JavaBeanRequest javaBeanRequest = new JavaBeanRequest(HttpUrl.EPOCOMCATION, E_politics.class);
+        javaBeanRequest.set(map);
+
+//        JsonRequest request = new JsonRequest(HttpUrl.EPOCOMCATION);
+//        request.set(map);
+
+        CallServer.getHttpclient().add(0, javaBeanRequest, new HttpListener<E_politics>() {
+            @Override
+            public void success(int what, Response<E_politics> response) {
+                animLayout.setVisibility(View.GONE);
+                if (TextUtils.equals(response.get().getRescode(), "0000")) {
+                    Intent intent = new Intent();
+                    switch (k) {
+                        case "1":
+                            intent.setClass(getActivity(), PhoneMsg.class);
+                            intent.putExtra("name", response.get().getList().get(0).getEncryptname());
+                            intent.putExtra("card_id", response.get().getList().get(0).getEncryptidno());
+                            intent.putExtra("bean", gBean);
+                            intent.putExtra("locksign", locksign);
+                            intent.putExtra("k", k);
+                            break;
+                        case "4":
+                            intent.setClass(getActivity(), PaymentActivity.class);
+                            intent.putExtra("name", response.get().getList().get(0).getEncryptname());
+                            intent.putExtra("card_id", response.get().getList().get(0).getEncryptidno());
+                            intent.putExtra("bean", qBean);
+                            intent.putExtra("querytype", querytype);
+                            intent.putExtra("k", k);
+                            break;
+                    }
+                    getActivity().startActivity(intent);
+                    getActivity().finish();
+                    Tip.show(getActivity().getApplicationContext(), "成功", true);
+                    Log.e(TAG, "success: " + "成功");
+                } else {
+                    Tip.show(getActivity().getApplicationContext(), response.get().getResult(), false);
+                    Log.e(TAG, "success: " + "失败" + response.get().getResult());
+                    getActivity().finish();
+                    Tip.show(getActivity(), "匹配失败,请重试", false);
+                }
+            }
+
+            @Override
+            public void fail(int what, String e) {
+                animLayout.setVisibility(View.GONE);
+                getActivity().finish();
+                Log.e(TAG, "fail: " + "网络连接异常" + e);
+                Tip.show(getActivity(), "匹配失败,请重试", false);
+            }
+        });
+
+    }
 
     @Override
     public void onResume() {

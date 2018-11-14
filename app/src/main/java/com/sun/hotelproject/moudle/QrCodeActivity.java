@@ -62,44 +62,55 @@ import static com.sun.hotelproject.utils.pulicKey.appid;
 
 
 public class QrCodeActivity extends BaseActivity {
-    @BindView(R.id.linear_sp1)LinearLayout linear_sp1;
-    @BindView(R.id.linear_sp2)LinearLayout linear_sp2;
-    @BindView(R.id.linear_sp4)LinearLayout linear_sp4;
-    @BindView(R.id.sp_tv4)TextView sp_tv4;
-    @BindView(R.id.sp_img4)ImageView sp_img4;
-    @BindView(R.id.sp4_content3)TextView sp4_content3;
-    @BindView(R.id.sp4_img5)ImageView sp4_img5;
-    @BindView(R.id.sp4_tv5)TextView sp4_tv5;
+    @BindView(R.id.linear_sp1)
+    LinearLayout linear_sp1;
+    @BindView(R.id.linear_sp2)
+    LinearLayout linear_sp2;
+    @BindView(R.id.linear_sp4)
+    LinearLayout linear_sp4;
+    @BindView(R.id.sp_tv4)
+    TextView sp_tv4;
+    @BindView(R.id.sp_img4)
+    ImageView sp_img4;
+    @BindView(R.id.sp4_content3)
+    TextView sp4_content3;
+    @BindView(R.id.sp4_img5)
+    ImageView sp4_img5;
+    @BindView(R.id.sp4_tv5)
+    TextView sp4_tv5;
     @BindView(R.id.anim_layout)
     RelativeLayout anim_lauout;
-    @BindView(R.id.anim_img)ImageView anim_img;
-    @BindView(R.id.anim_tv)TextView anim_tv;
+    @BindView(R.id.anim_img)
+    ImageView anim_img;
+    @BindView(R.id.anim_tv)
+    TextView anim_tv;
     //临时变量存储上次刷卡记录,为了防止重复刷卡
     private String tem = "0";
     //每次扫码后的时间
     private long lastTime = 0;
-    private List<Map<String,Object>>list;
-//    @BindView(R.id.tv)TextView tv;
+    private List<Map<String, Object>> list;
+    //    @BindView(R.id.tv)TextView tv;
 //    @BindView(R.id.check)Button check;
 //    @BindView(R.id.scan)Button scan;
     private static final String TAG = "QrCodeActivity";
-   // private String Code = "TXEZTAQAAAhwBWvz1iwAjAQMBsY9s9QcSYI8W18LXBYzlSOC6cUrUcEsAALgUZ8o=";
+    // private String Code = "TXEZTAQAAAhwBWvz1iwAjAQMBsY9s9QcSYI8W18LXBYzlSOC6cUrUcEsAALgUZ8o=";
     private String qRcode = "";//"TXEZTAQAAAhMBWzNFjv//AQIBo8qu3PWIN91aW6TvBInUw/G/+JjHOW8AAIxGAt8="; //"TXEZTAQAAAR4BWwYi9RwgAQIB7qBPDxQGZqyHhNkRLVabnqGpIklB5yIAADdj8uY=";//"TXEZTAQAAAkoBWwO+mxwgAQIBpgVNQBECYCi+qzLxNJdSKNNSOiaRtDsAACcrNwI=";//
-    private byte versionNum ; //版本号
+    private byte versionNum; //版本号
     private byte[] codeID = new byte[4];//码ID
     private byte EIDtype;//EID类型
-    private byte []entry_into_force_time = new byte[4];//生效时间
-    private byte []Effective_time_length = new byte[2];//有效时长
-    private byte Signature_algorithm_ID ;//签名算法ID
-    private byte Signature_public_key_index ;//签名公钥索引
-    private byte []Root_TOKENID = new byte[8];//根TOKENID
-    private byte []Root_signature = new byte[16];//根签名
-    private byte []Extended_data_length = new byte[2];//扩展数据长度
-    private byte []Extended_data = new byte[]{};//扩展数据
-    private byte []Two_dimensional_code_signature = new byte[4];//二维码签名
-    private byte[] data ;//二进制解码数据;
-    private Map<String,Object> map;
-    @BindView(R.id.toolbarBack)Button toolbarBack;
+    private byte[] entry_into_force_time = new byte[4];//生效时间
+    private byte[] Effective_time_length = new byte[2];//有效时长
+    private byte Signature_algorithm_ID;//签名算法ID
+    private byte Signature_public_key_index;//签名公钥索引
+    private byte[] Root_TOKENID = new byte[8];//根TOKENID
+    private byte[] Root_signature = new byte[16];//根签名
+    private byte[] Extended_data_length = new byte[2];//扩展数据长度
+    private byte[] Extended_data = new byte[]{};//扩展数据
+    private byte[] Two_dimensional_code_signature = new byte[4];//二维码签名
+    private byte[] data;//二进制解码数据;
+    private Map<String, Object> map;
+    @BindView(R.id.toolbarBack)
+    Button toolbarBack;
     //private String path = Environment.getDataDirectory().getPath();
     private byte[] oneKey = new byte[16];
     private byte[] twoKey = new byte[16];
@@ -110,9 +121,9 @@ public class QrCodeActivity extends BaseActivity {
     private String k;
     private boolean b;
     Subscription subscription;
-    String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/BaiduNetdisk/123.jpg";
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/BaiduNetdisk/123.jpg";
 
-    private List<MacKey.Bean>macList;
+    private List<MacKey.Bean> macList;
     private DaoSimple daoSimple;
     private MacKey.Bean macBean;
     TreeMap<String, byte[]> keyMap;
@@ -121,7 +132,9 @@ public class QrCodeActivity extends BaseActivity {
     private int time = 30;
     private Timer timer = new Timer();
     private TimerTask task;
-    private Handler handler = new Handler(){};
+    private Handler handler = new Handler() {
+    };
+
     @Override
     protected int layoutID() {
         return R.layout.activity_qr_code;
@@ -173,7 +186,9 @@ public class QrCodeActivity extends BaseActivity {
 //        }
 //    };
 
-    /**选择播放图片还是播放视频*/
+    /**
+     * 选择播放图片还是播放视频
+     */
     public void start() {
         task = new TimerTask() {
             @Override
@@ -181,7 +196,7 @@ public class QrCodeActivity extends BaseActivity {
                 qRcode = barcodeScan();
                 Log.e(TAG, "run: " + qRcode);
                 if (!qRcode.equals("")) {
-                  //  subscription.unsubscribe();
+                    //  subscription.unsubscribe();
                     if (isMyQRcode(qRcode)) {
                         Tip.show(App.getInstance(), "扫码成功", true);
                         Log.e(TAG, "run: " + "扫码成功");
@@ -194,11 +209,11 @@ public class QrCodeActivity extends BaseActivity {
             }
         };
         //定时器开始执行
-        timer.schedule(task,0,3000);
+        timer.schedule(task, 0, 3000);
 
     }
 
-    private  void  cancel(){
+    private void cancel() {
         if (task != null) {
             task.cancel();
             task = null;
@@ -244,30 +259,30 @@ public class QrCodeActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
-        k=getIntent().getStringExtra("k");
-        switch (k){
+        k = getIntent().getStringExtra("k");
+        switch (k) {
             case "1":
-                StringUtils.setCorlor(sp_tv4,sp_img4);
-                gBean= (GuestRoom.Bean) getIntent().getSerializableExtra("bean");
-                locksign=getIntent().getStringExtra("locksign");
+                StringUtils.setCorlor(sp_tv4, sp_img4);
+                gBean = (GuestRoom.Bean) getIntent().getSerializableExtra("bean");
+                locksign = getIntent().getStringExtra("locksign");
                 break;
             case "4":
                 linear_sp1.setVisibility(View.GONE);
                 linear_sp4.setVisibility(View.VISIBLE);
                 qBean = (QueryBookOrder.Bean) getIntent().getSerializableExtra("bean");
                 querytype = getIntent().getStringExtra("querytype");
-                StringUtils.setCorlor(sp4_tv5,sp4_img5,sp4_content3,querytype);
+                StringUtils.setCorlor(sp4_tv5, sp4_img5, sp4_content3, querytype);
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
-              //  getService();
+        //  getService();
     }
 
-    void init(String qRcode){
-        Log.e(TAG, "init: "+"进入方法" );
+    void init(String qRcode) {
+        Log.e(TAG, "init: " + "进入方法");
         //base64解码
-        base64Data = Base64.decode(qRcode.substring(5),Base64.DEFAULT);
+        base64Data = Base64.decode(qRcode.substring(5), Base64.DEFAULT);
         System.out.println("base64Data: " + Arrays.toString(base64Data));
 //        // 初始化根密钥
 //        byte[] rootKey1 = hex2Bin("279f71cb32f447cfa81a4c062e49d082");
@@ -370,16 +385,19 @@ public class QrCodeActivity extends BaseActivity {
                 // 校验签名
                 System.out.println("verify result: " + b);
                 if (b) {
-                    if(Constants.isTest){
-                        epccomcation("");
-                    }else {
-                        Intent intent = new Intent(this, FaceRecognitionActivity.class);
-                        if (k.equals("4")) intent.putExtra("querytype", querytype);
-                        intent.putExtra("k", k);intent.putExtra("mchid", mchid);
-                        startActivityForResult(intent, 1);
-                    }
-                }else {
-                    Tip.show(getApplicationContext(),"二维码不合法",false);
+                    Intent intent = new Intent(this, FaceRecognitionActivity.class);
+                    if (k.equals("4")) intent.putExtra("querytype", querytype);
+                    intent.putExtra("qrcode", qRcode);
+                    intent.putExtra("k", k);
+                    intent.putExtra("bean", gBean);
+                    intent.putExtra("mchid", mchid);
+                    intent.putExtra("EIDtype", EIDtype);
+                    intent.putExtra("locksign", locksign);
+                    intent.putExtra("entry_into_force_time", byteArrayTos(entry_into_force_time));
+                    intent.putExtra("Effective_time_length", byteArrayToShort(Effective_time_length) + "");
+                    startActivity(intent);
+                } else {
+                    Tip.show(getApplicationContext(), "二维码不合法", false);
                 }
             } else {
                 System.out.println("unsupport qrcode sign alg");
@@ -414,24 +432,24 @@ public class QrCodeActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-     //  handler.removeCallbacks(timeRunnable);
+        //  handler.removeCallbacks(timeRunnable);
         cancel();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-       // task();
+        // task();
         //getService();
-        if ( timer !=null){
+        if (timer != null) {
             timer.cancel();
-            timer =null;
+            timer = null;
             timer = new Timer();
             start();
         }
-        timer =new Timer();
+        timer = new Timer();
         start();
-       // handler.post(timeRunnable);
+        // handler.post(timeRunnable);
 
     }
 
@@ -468,15 +486,15 @@ public class QrCodeActivity extends BaseActivity {
      * 二维码条形码
      */
     Barcode bar;
-    private  int fd;
+    private int fd;
+
     String barcodeScan() {
         String str;
 
-        byte[] sendbyte = { 0x16, 0x54, 0x0d };
+        byte[] sendbyte = {0x16, 0x54, 0x0d};
 
         fd = Com4052.Com4052Open();
-        if(fd < 0)
-        {
+        if (fd < 0) {
             return null;
         }
         Com4052.Com4052Control(fd, 10);
@@ -492,85 +510,87 @@ public class QrCodeActivity extends BaseActivity {
 
 
     Animation operatingAnim;
+
     /**
      * E政通接口请求
      */
-    void epccomcation(String path){
-//        anim_lauout.setVisibility(View.VISIBLE);
-//        anim_img.setAnimation(operatingAnim);
-//        anim_img.startAnimation(operatingAnim);
-        anim_tv.setText("正在加载中......");
-        Map<String,Object> map = new HashMap<>();
-        map.put("appid",appid);
-        map.put("qr_code",qRcode);
-        if(Constants.isTest){
-            map.put("imgB64", new File(Environment.getExternalStorageDirectory()+"/renzhen.jpg"));
-        }else {
-            map.put("imgB64", new File(path));
-        }
-        map.put("qrcodeid",qRcode.substring(5));
-        map.put("eid",EIDtype+"");
-        map.put("createtime", byteArrayTos(entry_into_force_time));
-        map.put("validtime",byteArrayToShort(Effective_time_length)+"");
-        Log.e(TAG, "epccomcation: "+map.toString());
-        JavaBeanRequest javaBeanRequest = new JavaBeanRequest(HttpUrl.EPOCOMCATION,E_politics.class);
-        javaBeanRequest.set(map);
-
-//        JsonRequest request = new JsonRequest(HttpUrl.EPOCOMCATION);
-//        request.set(map);
-
-        CallServer.getHttpclient().add(0, javaBeanRequest, new HttpListener<E_politics>() {
-            @Override
-            public void success(int what, Response<E_politics> response) {
-                if (TextUtils.equals(response.get().getRescode(),"0000")){
-                    anim_lauout.setVisibility(View.GONE);
-                    anim_img.clearAnimation();
-                    Intent intent = new Intent();
-                        switch (k){
-                            case "1":
-                                intent.setClass(QrCodeActivity.this,PhoneMsg.class);
-                                intent.putExtra("name",response.get().getList().get(0).getEncryptname());
-                                intent.putExtra("card_id",response.get().getList().get(0).getEncryptidno());
-                                intent.putExtra("bean", gBean);
-                                intent.putExtra("locksign", locksign);
-                                intent.putExtra("k", k);
-                                break;
-                            case "4":
-                                intent.setClass(QrCodeActivity.this,PaymentActivity.class);
-                                intent.putExtra("name",response.get().getList().get(0).getEncryptname());
-                                intent.putExtra("card_id",response.get().getList().get(0).getEncryptidno());
-                                intent.putExtra("bean", qBean);
-                                intent.putExtra("querytype",querytype);
-                                intent.putExtra("k", k);
-                                break;
-                        }
-                        startActivity(intent);
-                        finish();
-                        Tip.show(getApplicationContext(),"成功",true);
-                        Log.e(TAG, "success: "+"成功" );
-                }else {
-                    Tip.show(getApplicationContext(),response.get().getResult(),false);
-                    Log.e(TAG, "success: "+"失败" +response.get().getResult());
-                    anim_lauout.setVisibility(View.GONE);
-                    anim_img.clearAnimation();
-                }
-            }
-            @Override
-            public void fail(int what, String e) {
-                anim_lauout.setVisibility(View.GONE);
-                anim_img.clearAnimation();
-                Log.e(TAG, "fail: "+"网络连接异常"+e );
-            }
-        });
-
-    }
+//    void epccomcation(String path) {
+////        anim_lauout.setVisibility(View.VISIBLE);
+////        anim_img.setAnimation(operatingAnim);
+////        anim_img.startAnimation(operatingAnim);
+//        anim_tv.setText("正在加载中......");
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("appid", appid);
+//        map.put("qr_code", qRcode);
+//        if (Constants.isTest) {
+//            map.put("imgB64", new File(Environment.getExternalStorageDirectory() + "/renzhen.jpg"));
+//        } else {
+//            map.put("imgB64", new File(path));
+//        }
+//        map.put("qrcodeid", qRcode.substring(5));
+//        map.put("eid", EIDtype + "");
+//        map.put("createtime", byteArrayTos(entry_into_force_time));
+//        map.put("validtime", byteArrayToShort(Effective_time_length) + "");
+//        Log.e(TAG, "epccomcation: " + map.toString());
+//        JavaBeanRequest javaBeanRequest = new JavaBeanRequest(HttpUrl.EPOCOMCATION, E_politics.class);
+//        javaBeanRequest.set(map);
+//
+////        JsonRequest request = new JsonRequest(HttpUrl.EPOCOMCATION);
+////        request.set(map);
+//
+//        CallServer.getHttpclient().add(0, javaBeanRequest, new HttpListener<E_politics>() {
+//            @Override
+//            public void success(int what, Response<E_politics> response) {
+//                if (TextUtils.equals(response.get().getRescode(), "0000")) {
+//                    anim_lauout.setVisibility(View.GONE);
+//                    anim_img.clearAnimation();
+//                    Intent intent = new Intent();
+//                    switch (k) {
+//                        case "1":
+//                            intent.setClass(QrCodeActivity.this, PhoneMsg.class);
+//                            intent.putExtra("name", response.get().getList().get(0).getEncryptname());
+//                            intent.putExtra("card_id", response.get().getList().get(0).getEncryptidno());
+//                            intent.putExtra("bean", gBean);
+//                            intent.putExtra("locksign", locksign);
+//                            intent.putExtra("k", k);
+//                            break;
+//                        case "4":
+//                            intent.setClass(QrCodeActivity.this, PaymentActivity.class);
+//                            intent.putExtra("name", response.get().getList().get(0).getEncryptname());
+//                            intent.putExtra("card_id", response.get().getList().get(0).getEncryptidno());
+//                            intent.putExtra("bean", qBean);
+//                            intent.putExtra("querytype", querytype);
+//                            intent.putExtra("k", k);
+//                            break;
+//                    }
+//                    startActivity(intent);
+//                    finish();
+//                    Tip.show(getApplicationContext(), "成功", true);
+//                    Log.e(TAG, "success: " + "成功");
+//                } else {
+//                    Tip.show(getApplicationContext(), response.get().getResult(), false);
+//                    Log.e(TAG, "success: " + "失败" + response.get().getResult());
+//                    anim_lauout.setVisibility(View.GONE);
+//                    anim_img.clearAnimation();
+//                }
+//            }
+//
+//            @Override
+//            public void fail(int what, String e) {
+//                anim_lauout.setVisibility(View.GONE);
+//                anim_img.clearAnimation();
+//                Log.e(TAG, "fail: " + "网络连接异常" + e);
+//            }
+//        });
+//
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode ==1 && resultCode == Activity.RESULT_OK){
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             String path = data.getStringExtra("path");
-            epccomcation(path);
+//            epccomcation(path);
 //            Intent intent = new Intent();
 //            switch (k){
 //                case "1":
@@ -612,7 +632,7 @@ public class QrCodeActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         cancel();
-      // handler.removeCallbacks(timeRunnable);
-      //  subscription.unsubscribe();
+        // handler.removeCallbacks(timeRunnable);
+        //  subscription.unsubscribe();
     }
 }

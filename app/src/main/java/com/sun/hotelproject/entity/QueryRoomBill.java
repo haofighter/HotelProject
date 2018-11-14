@@ -48,7 +48,16 @@ public class QueryRoomBill implements Serializable{
         private String addprice;//应加收房费
         private String accountprice;//账户余额
         private String inorderpmsno;//入住pms单号
+        private String rmk;//入住身份证类型 0身份证 1E证通
         private List<Map<String,String>> bills;//账单明细
+
+        public String getRmk() {
+            return rmk;
+        }
+
+        public void setRmk(String rmk) {
+            this.rmk = rmk;
+        }
 
         public String getName() {
             return name;
